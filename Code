@@ -1,0 +1,39 @@
+import cv2
+
+def video():
+    folder = '‪C:/Users/santi/Desktop/'
+    inputFile = 'carro.MP4'
+    
+    # cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(folder + inputFile)
+    
+    if not cap.isOpened():
+        print('Error opening video stream or file')
+        return 0
+    
+    cap.set(cv2.CAP_PROP_POS_FRAMES,1200)
+    
+    # backSub = cv2.bgsegm.createBackgroundSubtractorMOG()
+    # backSub = cv2.createBackgroundSubtractorMOG2()
+    backSub = cv2.createBackgroundSubtractorKNN()
+    
+    while (True):
+        ret, frame = cap.read()
+        if not ret:
+            break
+        
+        frameGRAY = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        fgMask = backSub.apply(frameGRAY)
+
+        cv2.imshow('Original', frameGRAY)
+        cv2.imshow('Mask', fgMask)
+        
+        if cv2.waitKey(30) & 0xFF == 27:
+            break
+        
+    cap.release()
+    
+    cv2.destroyAllWindows()
+    
+if _name_ == "_main_":
+    video()
